@@ -15,6 +15,7 @@ def index(request):
     for i in l:
         lat = str(i.point.coords[1])
         lon = str(i.point.coords[0])
+        unit = "metric"
 
         model = Location
         api_key = "7aad66ca433ee2d64650f4c17ce798e8"
@@ -22,32 +23,19 @@ def index(request):
         base_url = 'http://api.openweathermap.org/data/2.5/weather?'
 
 
-        comp_url = base_url +   "lat=" + lat + "&lon=" + lon + "&appid=" + api_key + "units=metric"
+        comp_url = base_url +   "lat=" + lat + "&lon=" + lon + "&appid=" + api_key + "&units=" + unit
         
         q = requests.get(url=comp_url).json()
         print(q)
 
         city_weather = {
-            # 'city': q['main']['name'], 
+            'city': ['name'], 
             'temperature': q['main']['temp'],
             'humidity': q['main']['humidity']
         }
 
-    # city_weather = {
-
-    # }
-    # queryset = Location.objects.filter(point__isnull=False)
-
-    data = {'l' : l, 'city_weather': city_weather}
+        data = {'l' : l, 'city_weather': city_weather, 'lat': lat, 'lon': lon}
 
     return render(request, 'weather/weather.html', data)
 
-# class Weather(TemplateView):
-#     template_name = "weather/weather.html"
-
-
-#     def get_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context["location"] = json.loads(serialize("geojson", Location.objects.all()))
-#         return context
     
