@@ -31,25 +31,25 @@
     <div class="container">
         <div id="map" class="shadow p-3 mb-5 bg-white rounded"></div>
 
-        <div class="row">
-            <p class="shadow-none p-3 mb-5 bg-light rounded col-md-3">City: {{ city_weather.name | default:"Not Found" }}</p>
-            <p class="shadow-none p-3 mb-5 bg-light rounded col-md-3">Temperature: {{ city_weather.temperature }}</p>
-            <p class="shadow-none p-3 mb-5 bg-light rounded col-md-3">Humidity: {{ city_weather.humidity }} %</p>
-        </div>
-    </div>
-    
-
-    
-
+        
+            {% for city_weather in weather %}
+                <div class="row">
+                    <p class="shadow-none p-3 mb-5 bg-light rounded col-md-3">City: {{ city_weather.city | default:"Not Found" }}</p>
+                    <p class="shadow-none p-3 mb-5 bg-light rounded col-md-3">Temperature: {{ city_weather.temperature }}</p>
+                    <p class="shadow-none p-3 mb-5 bg-light rounded col-md-3">Humidity: {{ city_weather.humidity }} %</p>
+                    <p class="shadow-none p-3 mb-5 bg-light rounded col-md-3">lat: {{ city_weather.lat }}  lon: {{ city_weather.lon }} </p>
+                    <!-- <p class="shadow-none p-3 mb-5 bg-light rounded col-md-3">lon: {{ city_weather.lon }} </p> -->
+                </div>
+            {% endfor %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
 </body>
 <script>
-    var mymap = L.map('map').setView([18.5204, 73.8567], 5);
+    var mymap = L.map('map').setView([73.8567, 18.5204], 5);
 
     const attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 
-    const tileUrl = "https://api.mapbox.com/v4/mapbox.satellite/1/0/0@2x.jpg90?access_token=pk.eyJ1Ijoid2FuZGVyZXIyNzExIiwiYSI6ImNrcW1qajJtbzAzNDkyb3N0bmtmcnQyMTMifQ.ISfQxYkI49sHv0ixlmdFyQ"
+    //const tileUrl = "https://api.mapbox.com/v4/mapbox.satellite/1/0/0@2x.jpg90?access_token=pk.eyJ1Ijoid2FuZGVyZXIyNzExIiwiYSI6ImNrcW1qajJtbzAzNDkyb3N0bmtmcnQyMTMifQ.ISfQxYkI49sHv0ixlmdFyQ"
 
     //const tiles = L.tileLayer(tileUrl, { attribution })
     
@@ -64,11 +64,24 @@
         accessToken: 'pk.eyJ1Ijoid2FuZGVyZXIyNzExIiwiYSI6ImNrcW1qajJtbzAzNDkyb3N0bmtmcnQyMTMifQ.ISfQxYkI49sHv0ixlmdFyQ'
     }).addTo(mymap);
 
-    {% for i in l %}
-        L.marker([{{lat}}, {{lon}}]).addTo(mymap)
+    {% for city_weather in weather %}
+        L.marker([{{ city_weather.lon }}, {{ city_weather.lat }}]).addTo(mymap)
+        
+        /*
+        let info = `The weather here at {{city_weather.lat}};,
+        {{city_weather.lon}}; is {{city_weather.temperature}} with
+        a humidity of {{city_weather.humidity}} %.`;
+
+        marker.bindPopup(info)*/
     {% endfor %}
 
-    marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+
+    //marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+
+    var popup = L.popup()
+    .setLatLng(18.524, 73.8567)
+    .setContent('<p>Hello world!<br />This is a nice popup.</p>')
+    .openOn(map);
 
 
 </script>
